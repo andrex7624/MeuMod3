@@ -1,8 +1,10 @@
 package com.shopmod;
 
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +60,25 @@ public final class ShopData {
         s(Items.GOLD_BLOCK, 135); s(Items.REDSTONE_BLOCK, 27); s(Items.LAPIS_BLOCK, 36);
         s(Items.EMERALD_BLOCK, 450); s(Items.DIAMOND_BLOCK, 900); s(Items.NETHERITE_BLOCK, 22500);
         s(Items.WHEAT, 1); s(Items.CARROT, 1); s(Items.POTATO, 1); s(Items.BONE, 1);
-        s(Items.ROTTEN_FLESH, 0.3); s(Items.STRING, 1); s(Items.GUNPOWDER, 3); s(Items.ENDER_PEARL, 40);
+        s(Items.BONE_MEAL, 0.3); s(Items.BONE_BLOCK, 3); s(Items.ROTTEN_FLESH, 0.3); s(Items.STRING, 1); s(Items.GUNPOWDER, 3); s(Items.ENDER_PEARL, 40);
+    }
+
+    private static final Map<Item, Double> BUY = new HashMap<>();
+    static {
+        for (Category c : CATEGORIES) for (Entry en : c.entries()) BUY.put(en.item(), en.price());
+    }
+
+    /**
+     * Preço de venda de QUALQUER item:
+     * 1) preço definido em SELL; 2) 40% do preço da loja; 3) padrão ($5 se não empilha, senão $0.25).
+     */
+    public static double sellPrice(ItemStack s) {
+        Item i = s.getItem();
+        Double p = SELL.get(i);
+        if (p != null) return p;
+        Double b = BUY.get(i);
+        if (b != null) return b * 0.4;
+        return s.getMaxStackSize() == 1 ? 5.0 : 0.25;
     }
 
     private ShopData() {}

@@ -37,14 +37,8 @@ public class SellMenu extends ChestMenu {
         for (int i = 0; i < box.getContainerSize(); i++) {
             ItemStack s = box.getItem(i);
             if (s.isEmpty()) continue;
-            Double price = ShopData.SELL.get(s.getItem());
-            if (price != null) {
-                total += price * s.getCount();
-                count += s.getCount();
-            } else {
-                player.getInventory().add(s);
-                if (!s.isEmpty()) Containers.dropItemStack(player.level(), player.getX(), player.getY(), player.getZ(), s);
-            }
+            total += ShopData.sellPrice(s) * s.getCount();
+            count += s.getCount();
             box.setItem(i, ItemStack.EMPTY);
         }
         if (count > 0) {
